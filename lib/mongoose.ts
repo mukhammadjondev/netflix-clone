@@ -19,7 +19,6 @@ export const connectToDatabase = async () => {
 
     await mongoose.connect(process.env.MONGODB_URL, options)
     isConnected = true
-    console.log('MongoDB connected')
   } catch (err) {
     console.log('MongoDB connection error. Please make sure MongoDB is running.')
   }
