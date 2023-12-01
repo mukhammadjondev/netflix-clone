@@ -13,7 +13,6 @@ export async function POST(req: Request) {
 
     const isExist = await Account.findOne({name})
     const allAccounts = await Account.find({uid})
-    console.log(allAccounts)
 
     if(isExist) {
       return NextResponse.json({success: false, message: 'You already have an account'})
@@ -27,7 +26,7 @@ export async function POST(req: Request) {
 
     const account = await Account.create({name, uid, pin: hashPin})
 
-    return NextResponse.json({account})
+    return NextResponse.json({success: true, data: account})
   } catch (err) {
     return NextResponse.json({success: false, message: 'Something went wrong'})
   }
@@ -47,7 +46,7 @@ export async function GET(req: Response) {
 
     const accounts = await Account.find({uid})
 
-    return NextResponse.json({success: true, accounts})
+    return NextResponse.json({success: true, data: accounts})
   } catch (err) {
     return NextResponse.json({success: false, message: 'Something went wrong'})
   }

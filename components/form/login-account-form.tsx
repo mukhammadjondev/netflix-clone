@@ -1,14 +1,52 @@
 import { useState } from 'react'
 import PinInput from 'react-pin-input'
 import { Loader2 } from 'lucide-react'
+import { AccountProps, AccountResponse } from '@/types'
+import { toast } from '../ui/use-toast'
+import axios from 'axios'
+import { useGlobalContext } from '@/context'
+import { usePathname, useRouter } from 'next/navigation'
 
-const LoginAccountForm = () => {
+interface Props {
+  currentAccount: AccountProps | null
+}
+
+const LoginAccountForm = ({currentAccount}: Props) => {
   const [error, setError] = useState<boolean>(false)
   const [pin, setPin] = useState<string>("")
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
+  const {setAccount} = useGlobalContext()
+  const pathname = usePathname()
+  const router = useRouter()
+
   const onSubmit = async (value: string) => {
-    console.log(value)
+    setIsLoading(true)
+    try {
+      const {data} = await axios.post<AccountResponse>('/api/account/login', {
+        uid: currentAccount?.uid,
+        accountId: currentAccount?._id,
+        pin: value,
+      })
+
+      if(data.success) {
+        setAccount(data.data as AccountProps)
+        sessionStorage.setItem('account', JSON.stringify(data.data))
+        router.push(pathname)
+        return toast({
+          title: 'Account unlocked',
+          description: 'Your account has been unlocked successfully'
+        })
+      } else {
+        setError(true)
+      }
+    } catch (err) {
+      return toast({
+        title: 'Error',
+        description: 'An error occured while logging in',
+        variant: 'destructive'
+      })
+    }
   }
 
   return (

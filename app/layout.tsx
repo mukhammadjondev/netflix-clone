@@ -4,6 +4,7 @@ import GlobalContext from '@/context'
 import { Provider } from '@/provider'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { Toaster } from '@/components/ui/toaster'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,6 +24,7 @@ export default function RootLayout({
         <Provider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <GlobalContext>
             {children}
+            <Toaster />
           </GlobalContext>
         </Provider>
       </body>

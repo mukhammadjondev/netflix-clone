@@ -1,15 +1,22 @@
 'use client'
 
-import { createContext, useState, useContext } from "react"
+import { createContext, useState, useContext, useEffect } from "react"
 import { AccountProps, ChildProps, ContextType } from "@/types"
 
 export const Context = createContext<ContextType | null>(null)
 
 const GlobalContext = ({children}: ChildProps) => {
   const [account, setAccount] = useState<AccountProps | null>(null)
+  const [pageLoader, setPageLoader] = useState<boolean>(true)
+
+  useEffect(() => {
+    setAccount(JSON.parse(sessionStorage.getItem('account')!))
+  }, [])
 
   return (
-    <Context.Provider value={{account, setAccount}}>{children}</Context.Provider>
+    <Context.Provider value={{account, setAccount, pageLoader, setPageLoader}}>
+      {children}
+    </Context.Provider>
   )
 }
 
