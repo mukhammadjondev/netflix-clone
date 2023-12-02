@@ -1,8 +1,13 @@
 'use client'
 
+import { MoviesDataProps } from "@/types"
 import Navbar from "./navbar"
 
-const Common = () => {
+interface Props {
+  moviesData: MoviesDataProps[]
+}
+
+const Common = ({moviesData}: Props) => {
   return (
     <main>
       <Navbar />
