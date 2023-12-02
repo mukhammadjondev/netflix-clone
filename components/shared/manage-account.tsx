@@ -9,7 +9,7 @@ import { Dialog, DialogContent } from "../ui/dialog"
 import axios from 'axios'
 import { useSession } from 'next-auth/react'
 import { toast } from "../ui/use-toast"
-import { Skeleton } from "../ui/skeleton"
+import Loader from "./loader"
 
 const ManageAccount = () => {
   const [isDelete, setIsDelete] = useState<boolean>(false)
@@ -67,17 +67,15 @@ const ManageAccount = () => {
     }
   }
 
+  if(isLoading) return <Loader />
+
   return (
     <div className="min-h-screen flex flex-col justify-center items-center relative">
       <div className="flex flex-col justify-center items-center">
         <h1 className="text-white text-5xl font-bold my-10 text-center">Who's Watching?</h1>
 
         <ul className="flex p-0 my-10 gap-6 flex-col sm:flex-row">
-          {isLoading ? (
-            [1, 2, 3, 4].map(c => (
-              <Skeleton key={c} className="h-[155px] w-[155px] cursor-pointer flex flex-col items-center gap-3 rounded" />
-            ))
-          ) : (
+          {isLoading ? null : (
             <>
               {accounts.map(account => (
                 <li key={account._id} onClick={() => {
