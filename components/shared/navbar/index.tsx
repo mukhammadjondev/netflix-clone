@@ -1,16 +1,20 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { menuItems } from "@/constants"
 import { useGlobalContext } from "@/context"
+import { cn } from "@/lib/utils"
 import { signOut } from "next-auth/react"
 import Image from "next/image"
-import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 import { AiOutlineSearch } from "react-icons/ai"
 import SearchBar from "./search-bar"
 
 const Navbar = () => {
   const [showSearchBar, setShowSearchBar] = useState<boolean>(false)
+  const [isScrolled, setIsScrolled] = useState<boolean>(false)
 
   const {account, setAccount} = useGlobalContext()
+  const router = useRouter()
 
   const logout = () => {
     sessionStorage.removeItem('account')
@@ -18,9 +22,22 @@ const Navbar = () => {
     setAccount(null)
   }
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if(window.scrollY > 100) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
+    }
+    window.addEventListener('scroll', handleScroll)
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
     <div className="relative">
-      <header className="header h-[10vh] hover:bg-black transition-all duration-400 ease-in-out">
+      <header className={cn("header h-[10vh] hover:bg-black transition-all duration-400 ease-in-out",  isScrolled && "bg-black")}>
         <div className="flex items-center h-full space-x-2 md:space-x-10">
           <Image src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"
             width={120}
@@ -31,7 +48,7 @@ const Navbar = () => {
 
           <ul className={"hidden md:space-x-4 md:flex cursor-pointer"}>
             {menuItems.map(item => (
-              <li key={item.path} className={"cursor-pointer text-[16px] font-light text-[#e5e5e5] transition duration-[.4s] hover:text-[#b3b3b3]"}>
+              <li onClick={() => router.push(item.path)} key={item.path} className={"cursor-pointer text-[16px] font-light text-[#e5e5e5] transition duration-[.4s] hover:text-[#b3b3b3]"}>
                 {item.title}
               </li>
             ))}
