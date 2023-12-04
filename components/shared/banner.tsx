@@ -23,10 +23,10 @@ const Banner = ({movies}: Props) => {
       <div className="absolute top-0 left-0 h-[95vh] w-full -z-10">
         <Image src={`${process.env.NEXT_PUBLIC_TMDB_IMAGE_BASE_URL}/${randomMovie?.backdrop_path || randomMovie?.poster_path}`} alt='Banner' fill objectFit="cover" />
         <div className="absolute w-full h-56 bg-gradient-to-t from-white to-transparent bottom-0 z-20" />
-        <div className={"absolute w-full h-full bg-gradient-to-r from-slate-800 to-transparent bottom-0 z-20"} />
+        <div className={"absolute w-full h-full bg-gradient-to-r from-slate-800/80 to-transparent bottom-0 z-20"} />
       </div>
 
-      <h1 className="text-2xl md:text-4xl lg:text-7xl font-bold line-clamp-1">
+      <h1 className="text-2xl md:text-4xl lg:text-6xl font-bold line-clamp-1">
         {randomMovie?.original_name || randomMovie?.title || randomMovie?.name}
       </h1>
       <p className="max-w-xs text-shadow-md text-xs md:max-w-lg md:text-lg lg:max-w-2xl line-clamp-3">
