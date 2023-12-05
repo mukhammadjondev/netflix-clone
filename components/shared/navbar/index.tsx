@@ -1,8 +1,14 @@
+'use client'
+
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Skeleton } from "@/components/ui/skeleton"
+import { toast } from "@/components/ui/use-toast"
 import { menuItems } from "@/constants"
 import { useGlobalContext } from "@/context"
 import { cn } from "@/lib/utils"
-import { signOut } from "next-auth/react"
+import { AccountProps, AccountResponse } from "@/types"
+import axios from "axios"
+import { signOut, useSession } from "next-auth/react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -13,8 +19,11 @@ import SearchBar from "./search-bar"
 const Navbar = () => {
   const [showSearchBar, setShowSearchBar] = useState<boolean>(false)
   const [isScrolled, setIsScrolled] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [accounts, setAccounts] = useState<AccountProps[]>([])
 
   const {account, setAccount, setPageLoader} = useGlobalContext()
+  const {data: session}: any = useSession()
   const router = useRouter()
 
   const logout = () => {
@@ -24,6 +33,23 @@ const Navbar = () => {
   }
 
   useEffect(() => {
+    const getAllAccounts = async () => {
+      setIsLoading(true)
+      try {
+        const {data} = await axios.get<AccountResponse>(`/api/account?uid=${session?.user?.uid}`)
+        data.success && setAccounts(data.data as AccountProps[])
+      } catch (err) {
+        return toast({
+          title: 'Error',
+          description: 'An error occured while creating your account',
+          variant: 'destructive'
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    getAllAccounts()
+
     const handleScroll = () => {
       if(window.scrollY > 100) {
         setIsScrolled(true)
@@ -76,9 +102,28 @@ const Navbar = () => {
               </div>
             </PopoverTrigger>
             <PopoverContent>
-              <button onClick={logout} className={"mt-4 text-center w-full text-sm font-light hover:bg-slate-800 rounded-md py-2 border border-white/40 h-[40px]"} >
-                Sign out of Netflix
-              </button>
+              <>
+                {isLoading ? (
+                  <div className="flex flex-col space-y-4">
+                    {[1, 2].map(c => (
+                      <Skeleton className="w-full h-14" key={c} />
+                    ))}
+                  </div>
+                ) : (
+                  accounts && accounts.map(account => (
+                    <div key={account._id} className="cursor-pointer flex h-14 gap-3 hover:bg-slate-800 rounded-md items-center px-4 py-2" onClick={() => {
+                      setAccount(null)
+                      sessionStorage.removeItem('account')
+                    }}>
+                      <img src="https://t.ly/9eB20" alt="profile" className="rounded object-cover w-[30px] h-[30px]" />
+                      <p>{account.name}</p>
+                    </div>
+                  ))
+                )}
+                <button onClick={logout} className={"mt-4 text-center w-full text-sm font-light hover:bg-slate-800 rounded-md py-2 border border-white/40 h-[40px]"} >
+                  Sign out of Netflix
+                </button>
+              </>
             </PopoverContent>
           </Popover>
         </div>
