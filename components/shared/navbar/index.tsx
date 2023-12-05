@@ -7,6 +7,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { AiOutlineSearch } from "react-icons/ai"
+import MoviePopup from "../movie/movie-popup"
 import SearchBar from "./search-bar"
 
 const Navbar = () => {
@@ -57,6 +58,8 @@ const Navbar = () => {
             ))}
           </ul>
         </div>
+
+        <MoviePopup />
 
         <div className="flex items-center relative font-light space-x-4 text-sm">
           {showSearchBar ? (

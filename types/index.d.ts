@@ -5,6 +5,10 @@ export interface ContextType {
   setAccount: Dispatch<SetStateAction<AccountProps | null>>
   pageLoader: boolean
   setPageLoader: Dispatch<SetStateAction<boolean>>
+  open: boolean
+  setOpen: Dispatch<SetStateAction<boolean>>
+  movie: MovieProps | null
+  setMovie: Dispatch<SetStateAction<MovieProps | null>>
 }
 
 export interface AccountProps {
@@ -58,4 +62,43 @@ export interface MovieProps {
   title: string
   addedToFavorites: boolean
   movieID: number
+}
+
+export interface MovieDetailsProps {
+  adult: boolean
+  backdrop_path: string
+  budget: number
+  homepage: string
+  id: number
+  imdb_id: string
+  original_language: string
+  original_title: string
+  overview: string
+  popularity: number
+  poster_path: string
+  release_date: string
+  revenue: number
+  runtime: number
+  status: string
+  tagline: string
+  title: string
+  video: boolean
+  videos: {
+    results: VideoProps[]
+  }
+  vote_average: number
+  vote_count: number
+}
+
+export interface VideoProps {
+  id: string
+  iso_639_1: string
+  iso_3166_1: string
+  key: string
+  name: string
+  official: boolean
+  published_at: string
+  site: string
+  size: number
+  type: string
 }
