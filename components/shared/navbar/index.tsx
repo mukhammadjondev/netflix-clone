@@ -71,6 +71,10 @@ const Navbar = () => {
             height={120}
             alt="NETFLIX"
             className="cursor-pointer object-contain"
+            onClick={() => {
+              router.push("/browse")
+              setPageLoader(true)
+            }}
           />
 
           <ul className={"hidden md:space-x-4 md:flex cursor-pointer"}>

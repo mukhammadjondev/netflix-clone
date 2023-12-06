@@ -65,3 +65,12 @@ export const getFavourites = async (uid?: string, accountId?: string) => {
     console.log(err)
   }
 }
+
+export const getSearchResults = async (type: string, query: string) => {
+  try {
+    const {data} = await axios.get(`${BASE_URL}/search/${type}?api_key=${API_KEY}&include_adult=false&language=en-US&query=${query}`)
+    return data && data.results
+  } catch (err) {
+    console.log(err)
+  }
+}
