@@ -1,20 +1,97 @@
 'use client'
 
+import { toast } from "@/components/ui/use-toast"
 import { useGlobalContext } from "@/context"
-import { MovieProps } from "@/types"
-import { ChevronDown, MinusIcon, PlusIcon } from "lucide-react"
+import { FavouriteProps, MovieProps } from "@/types"
+import axios from "axios"
+import { ChevronDown, Loader2, MinusIcon, PlusIcon } from "lucide-react"
+import { useSession } from "next-auth/react"
+import { Dispatch, SetStateAction, useState } from "react"
 import CustomImage from "../custom-image"
 
 interface Props {
   movie: MovieProps
+  favouriteId?: string
+  setFavourites?: Dispatch<SetStateAction<FavouriteProps[]>>
 }
 
-const MovieItem = ({movie}: Props) => {
-  const {setOpen, setMovie} = useGlobalContext()
+const MovieItem = ({movie, favouriteId = '', setFavourites}: Props) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const {setOpen, setMovie, account} = useGlobalContext()
+  const {data: session}: any = useSession()
 
   const onHandlerPopup = () => {
     setMovie(movie)
     setOpen(true)
+  }
+
+  const onAdd = async () => {
+    setIsLoading(true)
+    try {
+      const {data} = await axios.post('/api/favourite', {
+        uid: session?.user?.uid,
+        accountId: account?._id,
+        backdrop_path: movie?.backdrop_path,
+        poster_path: movie?.poster_path,
+        movieId: movie?.id,
+        type: movie?.type,
+        title: movie?.title || movie?.name,
+        overview: movie?.overview
+      })
+
+      if(data.success) {
+        return toast({
+          title: 'Success',
+          description: 'Movie added to your favourite list'
+        })
+      } else {
+        return toast({
+          title: 'Error',
+          description: data.message,
+          variant: 'destructive'
+        })
+      }
+
+    } catch (err) {
+      return toast({
+        title: 'Error',
+        description: 'Something went wrong',
+        variant: 'destructive'
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const onRemove = async () => {
+    setIsLoading(true)
+    try {
+      const {data} = await axios.delete(`/api/favourite?id=${favouriteId}`)
+      if (data?.success) {
+        if (setFavourites) {
+          setFavourites((prev: FavouriteProps[]) => prev.filter((item: FavouriteProps) => item._id !== favouriteId))
+        }
+        return toast({
+          title: "Success",
+          description: "Movie removed from your favourite list",
+        })
+      } else {
+        return toast({
+          title: "Error",
+          description: data.message,
+          variant: "destructive"
+        })
+      }
+    } catch (err) {
+      return toast({
+        title: 'Error',
+        description: 'Something went wrong',
+        variant: 'destructive'
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -24,10 +101,10 @@ const MovieItem = ({movie}: Props) => {
       <div className="space-x-3 hidden absolute p-2 bottom-0 buttonWrapper">
         <button
           className="cursor-pointer border flex p-2 items-center gap-x-2 rounded-full text-sm font-semibold transition hover:opacity-90 border-white bg-black opacity-75 text-black">
-          {movie?.addedToFavorites ? (
-            <MinusIcon color="#ffffff" className="h-7 w-7" />
+          {isLoading ? <Loader2 className={"h-7 w-7 animate-spin text-red-600"} /> : favouriteId.length ? (
+            <MinusIcon color="#ffffff" className="h-7 w-7" onClick={onRemove} />
           ) : (
-            <PlusIcon color="#ffffff" className="h-7 w-7" />
+            <PlusIcon color="#ffffff" className="h-7 w-7" onClick={onAdd} />
           )}
         </button>
         <button className="cursor-pointer p-2 border flex items-center gap-x-2 rounded-full text-sm font-semibold transition hover:opacity-90 border-white bg-black opacity-75">

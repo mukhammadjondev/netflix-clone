@@ -56,3 +56,12 @@ export const getSimilarMovies = async (type?: string, id?: number) => {
     console.log(err)
   }
 }
+
+export const getFavourites = async (uid?: string, accountId?: string) => {
+  try {
+    const {data} = await axios.get(`/api/favourite?uid=${uid}&accountId=${accountId}`)
+    return data
+  } catch (err) {
+    console.log(err)
+  }
+}
