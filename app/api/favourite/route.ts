@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Response) {
+export async function GET(req: Request) {
   try {
     await connectToDatabase()
 
@@ -43,7 +43,7 @@ export async function GET(req: Response) {
   }
 }
 
-export async function DELETE(req: Response) {
+export async function DELETE(req: Request) {
   try {
     await connectToDatabase()
 

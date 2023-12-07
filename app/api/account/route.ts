@@ -33,7 +33,7 @@ export async function POST(req: Request) {
 }
 
 // Get all accounts
-export async function GET(req: Response) {
+export async function GET(req: Request) {
   try {
     await connectToDatabase()
 
@@ -53,7 +53,7 @@ export async function GET(req: Response) {
 }
 
 // Delete an account
-export async function DELETE(req: Response) {
+export async function DELETE(req: Request) {
   try {
     await connectToDatabase()
 
